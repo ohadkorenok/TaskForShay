@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:proactive:jobdescriptor:3.2" xsi:schemaLocation="urn:proactive:jobdescriptor:3.2 http://www.activeeon.com/public_content/schemas/proactive/jobdescriptor/3.2/schedulerjob.xsd" name="Extra_02_StartFramegrabbers" projectName="Extra_02_StartFramegrabbers">
+  <description>Extra_02_StartFramegrabbers</description>
+  <taskFlow>
+    <task name="PrepGrabbersEnv">
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\PrepareEnvironment\PrepareEnvironment.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\Static\PrepGrabbersEnv.INI"/>
+          <parameter name="computers" value="AllComputers"/>
+        </parameters>
+      </javaExecutable>
+      <controlFlow block="none"/>
+    </task>
+    <task name="FrameGrabber">
+      <depends>
+        <task ref="NothingAfterKill"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\FrameGrabber\FrameGrabber.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\Static\FrameGrabber.ini"/>
+          <parameter name="computers" value="FramegrabberComputers"/>
+          <parameter name="background" value="true"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="AutoIniFrameGrabber">
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\AutoINI\AutoIni.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\AUTOINI\FrameGrabbers.aip"/>
+          <parameter name="computers" value="ControlComputer"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="CameraAgents">
+      <depends>
+        <task ref="NothingAfterClCom"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\CameraAgent\CameraAgent.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\Static\CameraAgent.ini"/>
+          <parameter name="computers" value="FrameGrabberComputers"/>
+          <parameter name="background" value="true"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="NothingAfterFrameGrabbers">
+      <depends>
+        <task ref="FrameGrabber"/>
+        <task ref="Ximp"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="c:\ReplayCode\Apps\Nothing\Nothing.exe"/>
+          <parameter name="arguments" value="10000"/>
+          <parameter name="computers" value="ControlComputer"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="NothingAfterKill">
+      <depends>
+        <task ref="SlayerFramegrabbers"/>
+        <task ref="PrepGrabbersEnv"/>
+        <task ref="AutoIniFrameGrabber"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="c:\ReplayCode\Apps\Nothing\Nothing.exe"/>
+          <parameter name="arguments" value="5000"/>
+          <parameter name="computers" value="ControlComputer"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="SlayerFramegrabbers">
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\Slayer\Slayer.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\Static\SlayerFramegrabbers.INI"/>
+          <parameter name="computers" value="AllComputers"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="Ximp">
+      <depends>
+        <task ref="NothingAfterKill"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\XIMP\Ximp.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\Static\channels.ini C:\ReplayCode\INIFiles\Static\filter.ini"/>
+          <parameter name="computers" value="FramegrabberComputers"/>
+          <parameter name="background" value="true"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="NothingAfterClCom">
+      <depends>
+        <task ref="ClCom"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="c:\ReplayCode\Apps\Nothing\Nothing.exe"/>
+          <parameter name="arguments" value="2000"/>
+          <parameter name="computers" value="ControlComputer"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="ClCom">
+      <depends>
+        <task ref="NothingAfterFrameGrabbers"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="c:\ReplayCode\Apps\ProcFG\ClCom_cmd.exe"/>
+          <parameter name="arguments" value="COM4 CL 9600"/>
+          <parameter name="computers" value="FrameGrabberComputers"/>
+          <parameter name="background" value="true"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+    <task name="Trigger">
+      <depends>
+        <task ref="NothingAfterClCom"/>
+      </depends>
+      <javaExecutable class="exe">
+        <parameters>
+          <parameter name="command" value="C:\ReplayCode\Apps\Trigger\TRIGGER.exe"/>
+          <parameter name="arguments" value="C:\ReplayCode\INIFiles\STATIC\Trigger.INI"/>
+          <parameter name="computers" value="ControlComputer"/>
+          <parameter name="background" value="true"/>
+          <parameter name="windowMode" value="normal"/>
+        </parameters>
+      </javaExecutable>
+    </task>
+  </taskFlow>
+</job>
